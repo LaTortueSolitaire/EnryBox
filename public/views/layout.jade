@@ -1,7 +1,50 @@
 doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title Bootstrap 4, from LayoutIt!
+        meta(name='description', content='Source code generated using layoutit.com')
+        meta(name='author', content='LayoutIt!')
+        link(href='../stylesheets/bootstrap.min.css', rel='stylesheet')
+        link(href='../stylesheets/style.css', rel='stylesheet')
+    body
+        .container-fluid
+            .row
+                .col-md-12
+                    .page-header
+                        h1
+                            | EnryBox 
+                            small Here you can register a username to your card or see your statistics
+            .row
+                .col-md-1
+                .col-md-4
+                    h3
+                        | Registration
+                    form(role='form')
+                        .form-group
+                            label(for='inputUsername')
+                                | Username
+                            input#inputUsername.form-control(type='text', required='')
+                        .form-group
+                            label(for='inputPinCode')
+                                | Pin code
+                            input#inputPinCode.form-control(type='text', required='')
+                        button.btn.btn-primary(type='submit')
+                            | Register
+                .col-md-2 
+                .col-md-4
+                    h3
+                        | See your statistics
+                    form(role='form')
+                        .form-group
+                            label(for='username')
+                                | Username
+                            input#username.form-control(type='text', required='')
+                        button.btn.btn-primary(type='submit')
+                            | Show me
+                .col-md-1
+        script(src='../javascripts/jquery.min.js')
+        script(src='../javascripts/bootstrap.min.js')
+        script(src='../javascripts/scripts.js')
