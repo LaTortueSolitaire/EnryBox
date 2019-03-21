@@ -98,7 +98,7 @@ function onListening() {
 
 var client  = mqtt.connect('mqqt://188.166.126.183', {clientId:"serverOrigin", clean:true, username:"lucas", password:"jolekoala1"} );
 
-var pin = 10000;
+
 
 client.on('connect', function () {
   client.subscribe("cardReader/+", function (err) {
@@ -118,14 +118,18 @@ client.on('message', function (topic, message) {
 
     db.getUser(message.toString(), function(user){
         if(!user){
-          db.createTemporaryUser(message.toString(), pin, function(){
-                client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+pin.toString());
-                pin++;
-                db.getUser(message.toString(), function(user){
+            onNewUser(message, pubTop, );            
+        }
+        else if(user.username===null){
+                if(!user.pin_code){
+                    onNewPin(message, pubTop);
+                }
+                else{
+                    client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+user.pin_code.toString());
                     db.getGameUser(user.RFID, function(game){
                         if(game){
                             if(game.status.includes("building")){
-                              client.publish(pubTop, "You already started an other game");
+                              client.publish(pubTop, "You are already starting a new game");
                             }
                             else{
                                 db.finishedGame(user.RFID, game, function(){
@@ -148,38 +152,7 @@ client.on('message', function (topic, message) {
                             });
                         }
                     });
-                });
-          }); 
-        }
-        else if(user.username===null){
-              client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+user.pin_code.toString());
-              db.getGameUser(user.RFID, function(game){
-                    if(game){
-                        if(game.status.includes("building")){
-                          client.publish(pubTop, "You are already starting a new game");
-                        }
-                        else{
-                            db.finishedGame(user.RFID, game, function(){
-                                client.publish(pubTop, "Well played ");
-                            });
-                        }
-                    }
-                    else{
-                        db.getGameBox(cardReader, function(game){
-                            if(game){
-                                db.addPlayerGame(user.RFID, game, function(){
-                                    client.publish(pubTop, "Good luck ");
-                                });
-                            }
-                            else{
-                                db.createGame(user.RFID, cardReader, function(){
-                                    client.publish(pubTop, "A game had just been created ask your partner to swipe is card to join your game");
-                                });
-                            }
-                        });
-                    }
-                });
-
+                }
         }
         else{
             db.getGameUser(user.RFID, function(game){
@@ -215,3 +188,94 @@ client.on('message', function (topic, message) {
 });
 
 
+function onNewUser(message, pubTop){
+    var pin = Math.floor(Math.random() * (9999 - 1000)) + 1000;
+    db.checkPin(pin, function(res){
+        if(!res){
+            db.createTemporaryUser(message.toString(), pin, function(){
+                client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+pin.toString()+". This code will be available 10 min");
+                db.getUser(message.toString(), function(user){
+                    db.getGameUser(user.RFID, function(game){
+                        if(game){
+                            if(game.status.includes("building")){
+                              client.publish(pubTop, "You already started an other game");
+                            }
+                            else{
+                                db.finishedGame(user.RFID, game, function(){
+                                    client.publish(pubTop, "Well played ");
+                                });
+                            }
+                        }
+                        else{
+                            db.getGameBox(cardReader, function(game){
+                                if(game){
+                                    db.addPlayerGame(user.RFID, game, function(){
+                                        client.publish(pubTop, "Good luck ");
+                                    });
+                                }
+                                else{
+                                    db.createGame(user.RFID, cardReader, function(){
+                                        client.publish(pubTop, "A game had just been created ask your partner to swipe is card to join your game");
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            }); 
+        }
+        else{
+            onNewUser(message, pubTop);
+        }
+    });
+}
+
+function onNewPin(message, pubTop){
+    var pin = Math.floor(Math.random() * (9999 - 1000)) + 1000;
+    db.checkPin(pin, function(res){
+        if(!res){
+            db.createTemporaryPin(message.toString(), pin, function(){
+                client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+pin.toString()+". This code will be available 10 min");
+                db.getUser(message.toString(), function(user){
+                    db.getGameUser(user.RFID, function(game){
+                        if(game){
+                            if(game.status.includes("building")){
+                              client.publish(pubTop, "You already started an other game");
+                            }
+                            else{
+                                db.finishedGame(user.RFID, game, function(){
+                                    client.publish(pubTop, "Well played ");
+                                });
+                            }
+                        }
+                        else{
+                            db.getGameBox(cardReader, function(game){
+                                if(game){
+                                    db.addPlayerGame(user.RFID, game, function(){
+                                        client.publish(pubTop, "Good luck ");
+                                    });
+                                }
+                                else{
+                                    db.createGame(user.RFID, cardReader, function(){
+                                        client.publish(pubTop, "A game had just been created ask your partner to swipe is card to join your game");
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            }); 
+        }
+        else{
+            onNewPin(message, pubTop);
+        }
+    });
+}
+
+var resetPin = setInterval(function(){
+    db.resetPin();
+}, 10*60*1000)
+
+var resetBuildingParty = setInterval(function(){
+    db.resetBuildingParty();
+}, 15*1000)

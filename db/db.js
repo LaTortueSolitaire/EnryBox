@@ -17,7 +17,6 @@ var dbName = 'enryChat';
 
 // Connection to the server
 function getUser(cardId, callback){
-    console.log("ingetUSer");
     MongoClient.connect(url, function(err, client){
         console.log("connectDatabase");
         //assert.equal(null, err);
@@ -29,7 +28,7 @@ function getUser(cardId, callback){
             $or: [
                 {RFID:cardId}, 
                 {NFC:cardId}
-            ],
+            ]
         }, 
         function(err,result){
             if (err) throw err;
@@ -56,7 +55,10 @@ function createTemporaryUser(cardId, pin, callback){
             RFID:cardId,
             NFC:null,
             elo:null,
-            rank:null
+            rank:null,
+            $currentDate : {
+                update:true
+            }
         },
         function(err,result){
             if (err) throw err;
@@ -66,6 +68,52 @@ function createTemporaryUser(cardId, pin, callback){
         client.close();
     });
 }
+
+function createTemporaryPin(cardId, pin, callback){
+    MongoClient.connect(url, function(err, client){
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        var  db = client.db(dbName);
+
+        db.collection("players").updateOne({
+                RFID:cardId
+            },
+            {
+                $set : {
+                    pin_code:pin
+                },
+                $currentDate : {
+                    update:true
+                }
+            },
+            function(err, res){
+                if (err) throw err;
+                callback();
+        });
+        
+        client.close();
+    });
+} 
+
+function checkPin(pin, callback){
+    MongoClient.connect(url, function(err, client){
+        console.log("connectDatabase");
+        //assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        var  db = client.db(dbName);
+
+        db.collection("players").findOne({
+            pin_code:pin
+        }, 
+        function(err,result){
+            if (err) throw err;
+            callback(result);
+        });
+        client.close();
+    });
+};
 
 function getGameUser(RFID, callback){
     MongoClient.connect(url, function(err, client){
@@ -209,7 +257,10 @@ function createGame(RFID, cardReader, callback){
             playerTwo:null,
             status:"building",
             winner:null,
-            cardReader_id:cardReader
+            cardReader_id:cardReader,
+            $currentDate: {
+                creation:true
+            }
         },
         function(err,result){
             if (err) throw err;
@@ -220,12 +271,62 @@ function createGame(RFID, cardReader, callback){
     });
 };
 
+function resetPin(){
+    MongoClient.connect(url, function(err, client){
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        var  db = client.db(dbName);
+
+        db.collection("players").updateMany({
+            username:null,
+            pin_code: { $ne: null},
+            update : { $lte: {$substract: [new Date(), 10*60*1000] } }
+        },
+        {
+            $set : {
+                pin_code:null
+            }
+        },
+        function(err,result){
+            if (err) throw err;
+            
+        });
+        
+        client.close();
+    });
+};
+
+function resetBuildingParty(){
+    MongoClient.connect(url, function(err, client){
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        var  db = client.db(dbName);
+
+        db.collection("games").deleteMany({
+            status:"building",
+            update : { $lte: {$substract: [new Date(), 15*1000] } }
+        },
+        function(err,result){
+            if (err) throw err;
+            
+        });
+        
+        client.close();
+    });
+};
+
 module.exports =  {
     getUser,
     createTemporaryUser,
+    createTemporaryPin,
+    checkPin,
     getGameUser,
     getGameBox,
     finishedGame,
     addPlayerGame,
-    createGame
+    createGame,
+    resetPin,
+    resetBuildingParty
 };
