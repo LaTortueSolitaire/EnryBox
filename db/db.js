@@ -56,9 +56,8 @@ function createTemporaryUser(cardId, pin, callback){
             NFC:null,
             elo:null,
             rank:null,
-            $currentDate : {
-                update:true
-            }
+            update:new Date(),
+            time:0
         },
         function(err,result){
             if (err) throw err;
@@ -81,7 +80,8 @@ function createTemporaryPin(cardId, pin, callback){
             },
             {
                 $set : {
-                    pin_code:pin
+                    pin_code:pin,
+                    time:0
                 },
                 $currentDate : {
                     update:true
@@ -258,9 +258,8 @@ function createGame(RFID, cardReader, callback){
             status:"building",
             winner:null,
             cardReader_id:cardReader,
-            $currentDate: {
-                creation:true
-            }
+            creation:new Date(),
+            time:0
         },
         function(err,result){
             if (err) throw err;
@@ -281,7 +280,7 @@ function resetPin(){
         db.collection("players").updateMany({
             username:null,
             pin_code: { $ne: null},
-            update : { $lte: {$substract: [new Date(), 10*60*1000] } }
+            time:1
         },
         {
             $set : {
@@ -290,10 +289,21 @@ function resetPin(){
         },
         function(err,result){
             if (err) throw err;
-            
+            db.collection("players").updateMany({
+                username:null,
+                pin_code: { $ne: null},
+                time:0
+            },
+            {
+                $set : {
+                    time:1
+                }
+            },
+            function(err,result){
+                if (err) throw err;
+
+            });
         });
-        
-        client.close();
     });
 };
 
@@ -304,18 +314,30 @@ function resetBuildingParty(){
 
         var  db = client.db(dbName);
 
-        db.collection("games").deleteMany({
+        db.collection("games").deleteMany(
+            {
             status:"building",
-            update : { $lte: {$substract: [new Date(), 15*1000] } }
+            time:1
         },
         function(err,result){
             if (err) throw err;
-            
+            db.collection("games").updateMany(
+                {
+                status:"building",
+                time:0
+            },
+            {
+                $set : {
+                    time : 1
+                }
+            },
+            function(err,result){
+                if (err) throw err;
+                client.close();
+            });   
         });
-        
-        client.close();
     });
-};
+}
 
 module.exports =  {
     getUser,

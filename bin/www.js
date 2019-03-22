@@ -118,11 +118,11 @@ client.on('message', function (topic, message) {
 
     db.getUser(message.toString(), function(user){
         if(!user){
-            onNewUser(message, pubTop, );            
+            onNewUser(message, pubTop, cardReader);            
         }
         else if(user.username===null){
                 if(!user.pin_code){
-                    onNewPin(message, pubTop);
+                    onNewPin(message, pubTop, cardReader);
                 }
                 else{
                     client.publish(pubTop, "You are not registered yet, to register on the chatbot use this code : "+user.pin_code.toString());
@@ -188,7 +188,7 @@ client.on('message', function (topic, message) {
 });
 
 
-function onNewUser(message, pubTop){
+function onNewUser(message, pubTop, cardReader){
     var pin = Math.floor(Math.random() * (9999 - 1000)) + 1000;
     db.checkPin(pin, function(res){
         if(!res){
@@ -230,7 +230,7 @@ function onNewUser(message, pubTop){
     });
 }
 
-function onNewPin(message, pubTop){
+function onNewPin(message, pubTop, cardReader){
     var pin = Math.floor(Math.random() * (9999 - 1000)) + 1000;
     db.checkPin(pin, function(res){
         if(!res){
