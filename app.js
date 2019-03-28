@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/enryBox', indexRouter);
+app.use('/enrybox', indexRouter);
 app.use('/enryBox/users', usersRouter);
 
 // catch 404 and forward to error handler

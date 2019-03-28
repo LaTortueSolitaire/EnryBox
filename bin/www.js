@@ -10,6 +10,7 @@ var http = require('http');
 var settings = require('../config/settings.js');
 var mqtt = require('mqtt');
 var db = require('../db/db.js');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
