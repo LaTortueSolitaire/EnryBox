@@ -57,7 +57,7 @@ function createTemporaryUser(cardId, pin, callback){
             elo:null,
             rank:null,
             update:new Date(),
-            time:0
+            time:0,
         },
         function(err,result){
             if (err) throw err;
