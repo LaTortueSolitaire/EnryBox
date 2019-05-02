@@ -1,5 +1,10 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
+doctype html
+html.no-js(lang='en')
+  head
+    title Test link webView
+  body
+    h1 Test link webView
+    p
+      a(href='myapp://activity/?id=1') First link
+    p
+      a(href='myapp://activity/?id=2') Second link
