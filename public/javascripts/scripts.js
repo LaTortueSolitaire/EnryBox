@@ -3,6 +3,7 @@
 var db = require('../../db/website.js');
 
 $(document).ready(function(){
+    console.log("ready");
    fillTable(); 
 });
 
