@@ -9,7 +9,7 @@ var debug = require('debug')('enrydraft:server');
 var http = require('http');
 var settings = require('../config/settings.js');
 var mqtt = require('mqtt');
-var db = require('../db/db.js');
+var db = require('../db/box.js');
 var fs = require('fs');
 
 /**
