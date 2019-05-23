@@ -17,12 +17,20 @@ function fillTable(){
                 var nbGames = res.games;
                 var nbWins = res.wins;
                 var percents = Math.round((nbWins/nbGames)*100);
+                var score;
+                
+                if(res.elo === null){
+                    score = "not yet";
+                }
+                else{
+                    score= res.elo.toString();
+                }
 
                 $("#rank_table tbody").append(
                         "<tr>"+
                             "<td>"+rankNb.toString()+"</td>"+
                             "<td>"+res.username+"</td>"+
-                            "<td>"+res.elo.toString()+"</td>"+
+                            "<td>"+score+"</td>"+
                             "<td>"+percents.toString()+"</td>"+
                         "</tr>"
                    );
