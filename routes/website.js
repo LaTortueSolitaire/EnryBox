@@ -13,7 +13,7 @@ var db = require('../db/website.js');
 router.get('/users', function(req, res, next) {
     db.getAllUsers(function(result){
         
-        res.json(trifusion(result));
+        res.json(triFusion(result));
         
     });
 });
