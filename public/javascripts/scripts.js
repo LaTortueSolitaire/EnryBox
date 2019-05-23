@@ -9,7 +9,7 @@ $(document).ready(function(){
 function fillTable(){
     db.getAllUsers(function(result){
         
-        
+        console.log(result);
         for(var i = 0; i< result.length; i++){
             var res = result[i];
             var rankNb = i+1;
