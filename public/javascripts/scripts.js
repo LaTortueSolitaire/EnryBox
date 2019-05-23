@@ -9,9 +9,16 @@ function fillTable(){
         url:'/enrybox/website/users',
         method:'GET',
         success: function(result){
+            var rankNb = 1;
             for(var i = 0; i< result.length; i++){
                 var res = result[i];
-                var rankNb = i+1;
+                var precElo;                
+                
+                if(i!==0 && precElo !==res.elo){
+                    rankNb++;
+                }
+                
+                precElo = res.elo;
 
                 var nbGames = res.games;
                 var nbWins = res.wins;
