@@ -33,6 +33,9 @@ function getAllUsers(callback){
 
         db.collection("players").find(
             {
+        },
+        {
+            projection: { _id:0, username: 1, elo:1, games:1, wins:1}
         }).toArray(function(err, result){
             if (err) throw err;
             callback(result);

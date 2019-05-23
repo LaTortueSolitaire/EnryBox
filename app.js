@@ -8,6 +8,7 @@ var mustacheExpress = require('mustache-express');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var websiteRouter = require('./routes/website');
 var showChatPrivacyRouter = require('./routes/showChatPrivacy');
 
 var app = express();
@@ -24,6 +25,7 @@ app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/enrybox', indexRouter);
+app.use('/enrybox/website', websiteRouter);
 app.use('/enrybox/users', usersRouter);
 app.use('/enrybox/chatPrivacy', showChatPrivacyRouter);
 

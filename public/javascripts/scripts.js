@@ -1,17 +1,13 @@
 // Empty JS for your own code to be here
-
-var db = require('../../db/website.js');
-
 $(document).ready(function(){
    console.log("ready");
    //fillTable(); 
 });
 
 function fillTable(){
-    db.getAllUsers(function(result){
-        
-        console.log(result);
-        for(var i = 0; i< result.length; i++){
+    
+    
+    for(var i = 0; i< result.length; i++){
             var res = result[i];
             var rankNb = i+1;
             
@@ -28,6 +24,4 @@ function fillTable(){
                        "</tr>"
                );
         }
-                
-    });
 }
