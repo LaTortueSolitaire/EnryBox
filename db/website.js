@@ -33,6 +33,9 @@ function getAllUsers(callback){
 
         db.collection("players").find(
             {
+                username: {
+                    $ne:null
+                }
         },
         {
             projection: { _id:0, username: 1, elo:1, games:1, wins:1}
