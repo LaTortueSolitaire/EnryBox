@@ -54,7 +54,7 @@ function createTemporaryUser(cardId, pin, callback){
             games:0,
             RFID:cardId,
             NFC:null,
-            elo:null,
+            elo:1000,
             rank:null,
             update:new Date(),
             time:0,
@@ -161,7 +161,7 @@ function getGameBox(cardReader, callback){
     });
 };
 
-function finishedGame(RFID, game, callback){
+function finishedGame(RFIDWinner, RFIDLoser, eloWinner, eloLoser, game, callback){
     MongoClient.connect(url, function(err, client){
         assert.equal(null, err);
         console.log("Connected successfully to server");
@@ -182,29 +182,28 @@ function finishedGame(RFID, game, callback){
         },function(err, result){
             if (err) throw err;
             db.collection("players").updateOne({
-                RFID:RFID
+                RFID:RFIDWinner
             },
             {
                 $inc : {
                     wins: 1,
                     games: 1
+                },
+                $set : {
+                    elo:eloWinner
                 }
             },
             function(err, res){
                 if (err) throw err;
-                var loser;
-                if(game.playerOne.includes(RFID)){
-                    loser = game.playerTwo;
-                }
-                else{
-                    loser = game.playerOne;
-                }
                 db.collection("players").updateOne({
-                    RFID:loser
+                    RFID:RFIDLoser
                 },
                 {
                     $inc : {
                         games: 1
+                    },
+                    $set:{
+                        elo:eloLoser
                     }
                 },
                 function(err, res){
