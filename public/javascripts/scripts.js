@@ -7,7 +7,7 @@ $(document).ready(function(){
 function fillTable(){
     
     $.ajax({
-        url:'ocean.enry.chat/enrybox/website/users',
+        url:'/enrybox/website/users',
         method:'GET',
         success: function(result){
             for(var i = 0; i< result.length; i++){
