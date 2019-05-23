@@ -1,10 +1,55 @@
 doctype html
-html.no-js(lang='en')
+html(lang='en')
   head
-    title Test link webView
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title Bootstrap 4, from LayoutIt!
+    meta(name='description', content='Source code generated using layoutit.com')
+    meta(name='author', content='LayoutIt!')
+    link(href='css/bootstrap.min.css', rel='stylesheet')
+    link(href='css/style.css', rel='stylesheet')
   body
-    h1 Test link webView
-    p
-      a(href='myapp://activity/?id=1') First link
-    p
-      a(href='myapp://activity/?id=2') Second link
+    .container-fluid
+      .row
+        .col-md-12
+          .page-header
+            h1
+              | EnryBox 
+              small Here you can see the ranking table of all players
+          ul.nav
+            li.nav-item
+              a.nav-link.active(href='#', id='ranking_page') Ranking
+            li.nav-item
+              a.nav-link.disabled(href='#', id='about_page') About
+            li.nav-item
+              a.nav-link.disabled(href='#', id='contact_page') Contact
+          #tab_selection.tabbable
+            ul.nav.nav-tabs
+              li.nav-item
+                a.nav-link.active.show(href='#tab1', data-toggle='tab', id="general_rank") Global ranking
+              li.nav-item
+                a.nav-link(href='#tab2', data-toggle='tab', id="weekly_rank") Weekly ranking
+            .tab-content
+              #tab1.tab-pane.active
+                p
+                  | I'm in Section 1.
+              #tab2.tab-pane
+                p
+                  | Howdy, I'm in Section 2.
+          table#rank_table.table.table-bordered.table-hover
+            thead
+              tr
+                th
+                  | #
+                th
+                  | Pseudonym
+                th
+                  | Score
+                th
+                  | Percentage of wins
+            tbody
+              
+    script(src='js/jquery.min.js')
+    script(src='js/bootstrap.min.js')
+    script(src='js/scripts.js')
