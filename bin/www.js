@@ -161,10 +161,10 @@ function launchingGame(user, pubTop, cardReader){
                     if(loser.elo===null){
                         winner.elo = 1000;
                     }
-                    eloWinner = winner.elo + 35(1-winnerEO);
+                    eloWinner = winner.elo + 35*(1-winnerEO);
 
                     var loserEO = 1/(1+Math.pow(10, winner.elo - loser.elo));
-                    eloLoser = loser.elo + 35(1-loserEO);
+                    eloLoser = loser.elo + 35*(1-loserEO);
 
                     db.finishedGame(winner.RFID, loser.RFID, eloWinner, eloLoser, game, function(){
                         client.publish(pubTop, "Well played ");
