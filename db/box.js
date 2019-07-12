@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -26,10 +26,10 @@ function getUser(cardId, callback){
 
         db.collection("players").findOne({
             $or: [
-                {RFID:cardId}, 
+                {RFID:cardId},
                 {NFC:cardId}
             ]
-        }, 
+        },
         function(err,result){
             if (err) throw err;
             callback(result);
@@ -63,7 +63,7 @@ function createTemporaryUser(cardId, pin, callback){
             if (err) throw err;
             callback();
         });
-        
+
         client.close();
     });
 }
@@ -91,10 +91,10 @@ function createTemporaryPin(cardId, pin, callback){
                 if (err) throw err;
                 callback();
         });
-        
+
         client.close();
     });
-} 
+}
 
 function checkPin(pin, callback){
     MongoClient.connect(url, function(err, client){
@@ -106,7 +106,7 @@ function checkPin(pin, callback){
 
         db.collection("players").findOne({
             pin_code:pin
-        }, 
+        },
         function(err,result){
             if (err) throw err;
             callback(result);
@@ -127,15 +127,15 @@ function getGameUser(RFID, callback){
                 { playerOne:RFID },
                 { playerTwo:RFID }
             ],
-            status:{ 
+            status:{
                 $in : [
                     "playing",
                     "building"
-                ]            
-            }  
+                ]
+            }
         }, function(err,result){
             if (err) throw err;
-            
+
             callback(result);
         });
         client.close();
@@ -151,10 +151,10 @@ function getGameBox(cardReader, callback){
 
         db.collection("games").findOne({
             cardReader_id:cardReader,
-            status:"building" 
+            status:"building"
         }, function(err,result){
             if (err) throw err;
-            
+
             callback(result);
         });
         client.close();
@@ -169,16 +169,16 @@ function finishedGame(RFIDWinner, RFIDLoser, eloWinner, eloLoser, game, callback
         var  db = client.db(dbName);
 
         db.collection("games").updateOne({
-            _id:game._id 
+            _id:game._id
         },
         {
             $set : {
                 status:"finished",
-                winner:RFID 
+                winner:RFIDWinner
             },
             $currentDate: {
                 time_end: true
-            }            
+            }
         },function(err, result){
             if (err) throw err;
             db.collection("players").updateOne({
@@ -224,7 +224,7 @@ function addPlayerGame(RFID, game, callback){
         var  db = client.db(dbName);
 
         db.collection("games").updateOne({
-            _id:game._id 
+            _id:game._id
         },
         {
             $set: {
@@ -239,7 +239,7 @@ function addPlayerGame(RFID, game, callback){
             if (err) throw err;
             callback();
         });
-        
+
         client.close();
     });
 };
@@ -264,7 +264,7 @@ function createGame(RFID, cardReader, callback){
             if (err) throw err;
             callback();
         });
-        
+
         client.close();
     });
 };
@@ -333,7 +333,7 @@ function resetBuildingParty(){
             function(err,result){
                 if (err) throw err;
                 client.close();
-            });   
+            });
         });
     });
 }
