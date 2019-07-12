@@ -108,7 +108,7 @@ client.on('connect', function () {
     }
   });
 });
- 
+
 client.on('message', function (topic, message) {
     // message is Buffer
     console.log(topic);
@@ -119,7 +119,7 @@ client.on('message', function (topic, message) {
 
     db.getUser(message.toString(), function(user){
         if(!user){
-            onNewUser(message, pubTop, cardReader);            
+            onNewUser(message, pubTop, cardReader);
         }
         else if(user.username===null){
                 if(!user.pin_code){
@@ -133,9 +133,9 @@ client.on('message', function (topic, message) {
         else{
             launchingGame(user, pubTop, cardReader);
         }
-        
+
     });
-    
+
 });
 
 function launchingGame(user, pubTop, cardReader){
@@ -147,7 +147,7 @@ function launchingGame(user, pubTop, cardReader){
             else{
                 var winner = user;
                 var loserTemp;
-                if(game.playerOne.includes(RFID)){
+                if(game.playerOne.includes(user.RFID)){
                     loserTemp = game.playerTwo;
                 }
                 else{
@@ -162,10 +162,10 @@ function launchingGame(user, pubTop, cardReader){
                         winner.elo = 1000;
                     }
                     eloWinner = winner.elo + 35(1-winnerEO);
-                    
+
                     var loserEO = 1/(1+Math.pow(10, winner.elo - loser.elo));
                     eloLoser = loser.elo + 35(1-loserEO);
-                    
+
                     db.finishedGame(winner.RFID, loser.RFID, eloWinner, eloLoser, game, function(){
                         client.publish(pubTop, "Well played ");
                     });
@@ -199,7 +199,7 @@ function onNewUser(message, pubTop, cardReader){
                 db.getUser(message.toString(), function(user){
                     launchingGame(user, pubTop, cardReader);
                 });
-            }); 
+            });
         }
         else{
             onNewUser(message, pubTop, cardReader);
@@ -216,7 +216,7 @@ function onNewPin(message, pubTop, cardReader){
                 db.getUser(message.toString(), function(user){
                     launchingGame(user, pubTop, cardReader);
                 });
-            }); 
+            });
         }
         else{
             onNewPin(message, pubTop);
